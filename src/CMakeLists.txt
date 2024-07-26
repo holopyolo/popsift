@@ -1,5 +1,5 @@
 
-CUDA_ADD_LIBRARY(popsift
+add_library(popsift
         popsift/popsift.cpp popsift/popsift.h
         popsift/features.cu popsift/features.h
         popsift/sift_constants.cu popsift/sift_constants.h
@@ -39,6 +39,18 @@ CUDA_ADD_LIBRARY(popsift
         popsift/common/vec_macros.h
         popsift/common/clamp.h)
 
+target_link_libraries(popsift
+                      PUBLIC
+		      CUDA::cublas
+		      Threads::Threads)
+
+set_target_properties(popsift PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(popsift PROPERTIES DEBUG_POSTFIX "d")
+set_target_properties(popsift PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+
+if(PopSift_USE_NVTX)
+	target_link_libraries(popsift PUBLIC CUDA::nvtx3)
+endif(PopSift_USE_NVTX)
 
 # build directory containing the automatically generated files
 set(popsift_generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
@@ -52,15 +64,6 @@ target_include_directories(popsift
             $<BUILD_INTERFACE:${popsift_generated_dir}/popsift>
             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/>
             ${CUDA_INCLUDE_DIRS})
-
-
-set_target_properties(popsift PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(popsift PROPERTIES DEBUG_POSTFIX "d")
-
-# cannot use PRIVATE here as there is a bug in FindCUDA and CUDA_ADD_LIBRARY
-# https://gitlab.kitware.com/cmake/cmake/issues/16097
-target_link_libraries(popsift ${CUDA_CUDADEVRT_LIBRARY} ${CUDA_CUBLAS_LIBRARIES} Threads::Threads)
-
 
 # EXPORTING THE LIBRARY
 #
