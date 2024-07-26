@@ -7,7 +7,7 @@ project(PopSift VERSION 1.0.0 LANGUAGES CXX CUDA)
 # Since CMake 3.18. See https://cmake.org/cmake/help/latest/policy/CMP0104.html
 cmake_policy(SET CMP0104 NEW)
 
-set(CMAKE_CUDA_ARCHITECTURES "native"
+set(CMAKE_CUDA_ARCHITECTURES "all-major"
     CACHE
     STRING "Which CUDA CCs to support: native, all, all-major or an explicit list delimited by semicolons"
     FORCE)
