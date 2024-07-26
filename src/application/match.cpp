@@ -30,13 +30,6 @@
 #endif
 #include "pgmread.h"
 
-#if POPSIFT_IS_DEFINED(POPSIFT_USE_NVTX)
-#include <nvToolsExtCuda.h>
-#else
-#define nvtxRangePushA(a)
-#define nvtxRangePop()
-#endif
-
 using namespace std;
 
 static bool print_dev_info  {false};
@@ -171,7 +164,6 @@ SiftJob* process_image( const string& inputFile, PopSift& PopSift )
     unsigned char* image_data;
     SiftJob* job;
 
-    nvtxRangePushA( "load and convert image" );
 #ifdef USE_DEVIL
     if( ! pgmread_loading )
     {
@@ -189,8 +181,6 @@ SiftJob* process_image( const string& inputFile, PopSift& PopSift )
         cout << "Loading " << w << " x " << h << " image " << inputFile << endl;
         image_data = img.GetData();
 
-        nvtxRangePop( );
-
         // PopSift.init( w, h );
         job = PopSift.enqueue( w, h, image_data );
 
@@ -205,8 +195,6 @@ SiftJob* process_image( const string& inputFile, PopSift& PopSift )
         if( image_data == nullptr ) {
             exit( EXIT_FAILURE );
         }
-
-        nvtxRangePop( );
 
         // PopSift.init( w, h );
         job = PopSift.enqueue( w, h, image_data );

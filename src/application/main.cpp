@@ -30,13 +30,6 @@
 #endif
 #include "pgmread.h"
 
-#if POPSIFT_IS_DEFINED(POPSIFT_USE_NVTX)
-#include <nvToolsExtCuda.h>
-#else
-#define nvtxRangePushA(a)
-#define nvtxRangePop()
-#endif
-
 using namespace std;
 
 static bool print_dev_info  = false;
@@ -183,8 +176,6 @@ SiftJob* process_image( const string& inputFile, PopSift& PopSift )
             exit( -1 );
         }
 
-        nvtxRangePushA( "load and convert image - devil" );
-
         ilImage img;
         if( img.Load( inputFile.c_str() ) == false ) {
             cerr << "Could not load image " << inputFile << endl;
@@ -200,8 +191,6 @@ SiftJob* process_image( const string& inputFile, PopSift& PopSift )
 
         image_data = img.GetData();
 
-        nvtxRangePop( ); // "load and convert image - devil"
-
         job = PopSift.enqueue( w, h, image_data );
 
         img.Clear();
@@ -209,15 +198,12 @@ SiftJob* process_image( const string& inputFile, PopSift& PopSift )
     else
 #endif
     {
-        nvtxRangePushA( "load and convert image - pgmread" );
         int w{};
         int h{};
         image_data = readPGMfile( inputFile, w, h );
         if( image_data == nullptr ) {
             exit( EXIT_FAILURE );
         }
-
-        nvtxRangePop( ); // "load and convert image - pgmread"
 
         if( ! float_mode )
         {
@@ -251,16 +237,10 @@ void read_job( SiftJob* job, bool really_write )
          << endl;
 
     if( really_write ) {
-        nvtxRangePushA( "Writing features to disk" );
-
         std::ofstream of( "output-features.txt" );
         feature_list->print( of, write_as_uchar );
     }
     delete feature_list;
-
-    if( really_write ) {
-        nvtxRangePop( ); // Writing features to disk
-    }
 }
 
 int main(int argc, char **argv)

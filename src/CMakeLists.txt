@@ -1,6 +1,6 @@
 
-add_library(popsift
-        popsift/popsift.cpp popsift/popsift.h
+add_library(popsift SHARED
+        popsift/popsift.cu popsift/popsift.h
         popsift/features.cu popsift/features.h
         popsift/sift_constants.cu popsift/sift_constants.h
         popsift/sift_conf.cu popsift/sift_conf.h
@@ -41,29 +41,35 @@ add_library(popsift
 
 target_link_libraries(popsift
                       PUBLIC
-		      CUDA::cublas
+		      CUDA::cudart
+		      CUDA::nvToolsExt
 		      Threads::Threads)
+# expected library to link was: "CUDA::nvtx3" but it appears to be simply nvToolsExt
+# or maybe ${NVTX_LIBRARY} ???
+
+# It is necessary to choose between shared and static, otherwise the CUDA_RUNTIME_LIBRARY target property
+# will not be set.
+# According to https://cmake.org/cmake/help/latest/variable/CMAKE_CUDA_RUNTIME_LIBRARY.html
+string(APPEND CMAKE_CUDA_FLAGS " --cudart shared")
 
 set_target_properties(popsift PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(popsift PROPERTIES DEBUG_POSTFIX "d")
 set_target_properties(popsift PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-
-if(PopSift_USE_NVTX)
-	target_link_libraries(popsift PUBLIC CUDA::nvtx3)
-endif(PopSift_USE_NVTX)
 
 # build directory containing the automatically generated files
 set(popsift_generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
 
 # BUILD_INTERFACE allows to include the directory with source only when target is
 # built in the building tree (ie, not from an install location)
+# The CUDA install dir variable has changed from the old CUDA_INCLUDE_DIRS to the new CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES
 target_include_directories(popsift
             PUBLIC
             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
             $<BUILD_INTERFACE:${popsift_generated_dir}>
             $<BUILD_INTERFACE:${popsift_generated_dir}/popsift>
             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/>
-            ${CUDA_INCLUDE_DIRS})
+	    ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}
+	    )
 
 # EXPORTING THE LIBRARY
 #

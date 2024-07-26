@@ -1,5 +1,5 @@
-# CMake below 3.4 does not work with CUDA separable compilation at all
-cmake_minimum_required(VERSION 3.27)
+# First-order language CUDA requires at least CMake 3.18
+cmake_minimum_required(VERSION 3.24)
 
 project(PopSift VERSION 1.0.0 LANGUAGES CXX CUDA)
 
@@ -7,7 +7,7 @@ project(PopSift VERSION 1.0.0 LANGUAGES CXX CUDA)
 # Since CMake 3.18. See https://cmake.org/cmake/help/latest/policy/CMP0104.html
 cmake_policy(SET CMP0104 NEW)
 
-set(CMAKE_CUDA_ARCHITECTURES "all-major"
+set(CMAKE_CUDA_ARCHITECTURES "native"
     CACHE
     STRING "Which CUDA CCs to support: native, all, all-major or an explicit list delimited by semicolons"
     FORCE)
