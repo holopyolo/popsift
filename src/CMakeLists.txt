@@ -1,5 +1,6 @@
+# Do not specify SHARED or STATIC in add_library. Let the variable BUILD_SHARED_LIBS determine this.
 
-add_library(popsift SHARED
+add_library(popsift
         popsift/popsift.cu popsift/popsift.h
         popsift/features.cu popsift/features.h
         popsift/sift_constants.cu popsift/sift_constants.h
@@ -49,11 +50,6 @@ target_link_libraries(popsift
                       PUBLIC
 		      CUDA::nvtx3)
 endif()
-
-# It is necessary to choose between shared and static, otherwise the CUDA_RUNTIME_LIBRARY target property
-# will not be set.
-# According to https://cmake.org/cmake/help/latest/variable/CMAKE_CUDA_RUNTIME_LIBRARY.html
-string(APPEND CMAKE_CUDA_FLAGS " --cudart shared")
 
 set_target_properties(popsift PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(popsift PROPERTIES DEBUG_POSTFIX "d")
