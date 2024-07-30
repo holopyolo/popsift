@@ -42,10 +42,13 @@ add_library(popsift SHARED
 target_link_libraries(popsift
                       PUBLIC
 		      CUDA::cudart
-		      CUDA::nvToolsExt
 		      Threads::Threads)
-# expected library to link was: "CUDA::nvtx3" but it appears to be simply nvToolsExt
-# or maybe ${NVTX_LIBRARY} ???
+
+if(PopSift_USE_NVTX_PROFILING)
+target_link_libraries(popsift
+                      PUBLIC
+		      CUDA::nvtx3)
+endif()
 
 # It is necessary to choose between shared and static, otherwise the CUDA_RUNTIME_LIBRARY target property
 # will not be set.

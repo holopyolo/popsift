@@ -60,10 +60,6 @@ else()
   set(PD_COMPILE_OPTIONS "" )
 endif()
 
-if(PopSift_USE_NVTX_PROFILING)
-  list(APPEND PD_LINK_LIBS ${CUDA_NVTX_LIBRARY})
-endif(PopSift_USE_NVTX_PROFILING)
-
 #############################################################
 # popsift-demo
 #############################################################
