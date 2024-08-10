@@ -42,7 +42,7 @@ find_package(DevIL COMPONENTS IL ILU) # yields IL_FOUND, IL_LIBRARIES, IL_INCLUD
 if(PopSift_BOOST_USE_STATIC_LIBS)
   set(Boost_USE_STATIC_LIBS ON)
 endif()
-find_package(Boost 1.53.0 REQUIRED COMPONENTS filesystem program_options system)
+find_package(Boost 1.71.0 REQUIRED COMPONENTS filesystem program_options system)
 if(WIN32)
   add_definitions("-DBOOST_ALL_NO_LIB")
 endif(WIN32)
@@ -60,10 +60,6 @@ else()
   set(PD_COMPILE_OPTIONS "" )
 endif()
 
-if(PopSift_USE_NVTX_PROFILING)
-  list(APPEND PD_LINK_LIBS ${CUDA_NVTX_LIBRARY})
-endif(PopSift_USE_NVTX_PROFILING)
-
 #############################################################
 # popsift-demo
 #############################################################
@@ -73,7 +69,7 @@ add_executable(popsift-demo  main.cpp pgmread.cpp pgmread.h)
 set_property(TARGET popsift-demo PROPERTY CXX_STANDARD 11)
 
 target_compile_options(popsift-demo PRIVATE ${PD_COMPILE_OPTIONS} )
-target_include_directories(popsift-demo PUBLIC ${PD_INCLUDE_DIRS})
+target_include_directories(popsift-demo PUBLIC PopSift::popsift ${PD_INCLUDE_DIRS})
 target_compile_definitions(popsift-demo PRIVATE ${Boost_DEFINITIONS})
 target_link_libraries(popsift-demo PUBLIC PopSift::popsift ${PD_LINK_LIBS})
 
@@ -87,7 +83,7 @@ add_executable(popsift-match match.cpp pgmread.cpp pgmread.h)
 set_property(TARGET popsift-match PROPERTY CXX_STANDARD 11)
 
 target_compile_options(popsift-match PRIVATE ${PD_COMPILE_OPTIONS} )
-target_include_directories(popsift-match PUBLIC ${PD_INCLUDE_DIRS})
+target_include_directories(popsift-match PUBLIC PopSift::popsift ${PD_INCLUDE_DIRS})
 target_compile_definitions(popsift-match PRIVATE ${Boost_DEFINITIONS})
 target_link_libraries(popsift-match PUBLIC PopSift::popsift ${PD_LINK_LIBS})
 
