@@ -15,7 +15,7 @@ else()
       CACHE
       STRING "Which CUDA CCs to support: native, all, all-major or an explicit list delimited by semicolons")
 endif()
-
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -allow-unsupported-compiler")
 project(PopSift VERSION 1.0.0 LANGUAGES CXX CUDA)
 
 # Policy to support CUDA as a first-order language for CMake.
